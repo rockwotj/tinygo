@@ -1405,6 +1405,24 @@ func getListOfPackages(pkgs []string, options *compileopts.Options) ([]string, e
 	return pkgNames, nil
 }
 
+func printAutocompleteHelp() {
+	type pluginHelp struct {
+		Path    string   `json:"path,omitempty"`
+		Short   string   `json:"short,omitempty"`
+		Long    string   `json:"long,omitempty"`
+		Example string   `json:"example,omitempty"`
+		Args    []string `json:"args,omitempty"`
+	}
+	buildHelp := pluginHelp{
+		Path:  "transform_build_tinygo",
+		Short: "compile a tinygo module in the current directory",
+	}
+	b, err := json.Marshal(&[]pluginHelp{buildHelp})
+	if err != nil {
+	}
+	fmt.Fprintln(os.Stdout, string(b))
+}
+
 // This is a pure addition to upstream tinygo.
 //
 // It provides a hardcoded `build` command and autocomplete support for rpk
@@ -1451,8 +1469,15 @@ func main() {
 	llvmFeatures := flag.String("llvm-features", "", "comma separated LLVM features to enable")
 	flagJSON := flag.Bool("json", false, "print data in JSON format")
 	outpath := flag.String("o", "", "output filename")
+	helpAutocomplete := flag.Bool("help-autocomplete", false, "output complete help for rpk")
 	// strip the .rpk.managed-tinygo prefix
 	flag.CommandLine.Parse(os.Args[1:])
+
+	if *helpAutocomplete {
+		printAutocompleteHelp()
+		os.Exit(0)
+	}
+
 	globalVarValues, err := parseGoLinkFlag(*ldflags)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
