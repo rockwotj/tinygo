@@ -448,11 +448,21 @@ func TestTinyStruct(t *testing.T) {
 		t.Errorf("FieldByName(Foo)=%v,%v, want Foo, true", q.Name, ok)
 	}
 
+	q, ok = reffb.FieldByNameFunc(func(s string) bool { return s == "BazInt" })
+	if q.Name != "BazInt" || !ok {
+		t.Errorf("FieldByNameFunc(BazInt)=%v,%v, want BazInt, true", q.Name, ok)
+	}
+
 	if got, want := q.Tag, `foo:"struct tag"`; string(got) != want {
 		t.Errorf("StrucTag for Foo=%v, want %v", got, want)
 	}
 
 	q, ok = reffb.FieldByName("Snorble")
+	if q.Name != "" || ok {
+		t.Errorf("FieldByName(Snorble)=%v,%v, want ``, false", q.Name, ok)
+	}
+
+	q, ok = reffb.FieldByNameFunc(func(s string) bool { return s == "Snorble" })
 	if q.Name != "" || ok {
 		t.Errorf("FieldByName(Snorble)=%v,%v, want ``, false", q.Name, ok)
 	}
