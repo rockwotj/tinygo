@@ -795,77 +795,77 @@ wasmtest:
 build/release: tinygo gen-device wasi-libc $(if $(filter 1,$(USE_SYSTEM_BINARYEN)),,binaryen)
 	@mkdir -p build/release/tinygo/bin
 	@mkdir -p build/release/tinygo/lib/clang/include
-	@mkdir -p build/release/tinygo/lib/CMSIS/CMSIS
-	@mkdir -p build/release/tinygo/lib/macos-minimal-sdk
-	@mkdir -p build/release/tinygo/lib/mingw-w64/mingw-w64-crt/lib-common
-	@mkdir -p build/release/tinygo/lib/mingw-w64/mingw-w64-headers/defaults
-	@mkdir -p build/release/tinygo/lib/musl/arch
-	@mkdir -p build/release/tinygo/lib/musl/crt
-	@mkdir -p build/release/tinygo/lib/musl/src
-	@mkdir -p build/release/tinygo/lib/nrfx
-	@mkdir -p build/release/tinygo/lib/picolibc/newlib/libc
-	@mkdir -p build/release/tinygo/lib/picolibc/newlib/libm
+	# @mkdir -p build/release/tinygo/lib/CMSIS/CMSIS
+	# @mkdir -p build/release/tinygo/lib/macos-minimal-sdk
+	# @mkdir -p build/release/tinygo/lib/mingw-w64/mingw-w64-crt/lib-common
+	# @mkdir -p build/release/tinygo/lib/mingw-w64/mingw-w64-headers/defaults
+	# @mkdir -p build/release/tinygo/lib/musl/arch
+	# @mkdir -p build/release/tinygo/lib/musl/crt
+	# @mkdir -p build/release/tinygo/lib/musl/src
+	# @mkdir -p build/release/tinygo/lib/nrfx
+	# @mkdir -p build/release/tinygo/lib/picolibc/newlib/libc
+	# @mkdir -p build/release/tinygo/lib/picolibc/newlib/libm
 	@mkdir -p build/release/tinygo/lib/wasi-libc
-	@mkdir -p build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0
-	@mkdir -p build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0plus
-	@mkdir -p build/release/tinygo/pkg/thumbv7em-unknown-unknown-eabi-cortex-m4
+	# @mkdir -p build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0
+	# @mkdir -p build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0plus
+	# @mkdir -p build/release/tinygo/pkg/thumbv7em-unknown-unknown-eabi-cortex-m4
 	@echo copying source files
 	@cp -p  build/tinygo$(EXE)           build/release/tinygo/bin
 ifneq ($(USE_SYSTEM_BINARYEN),1)
 	@cp -p  build/wasm-opt$(EXE)         build/release/tinygo/bin
 endif
 	@cp -p $(abspath $(CLANG_SRC))/lib/Headers/*.h build/release/tinygo/lib/clang/include
-	@cp -rp lib/CMSIS/CMSIS/Include      build/release/tinygo/lib/CMSIS/CMSIS
-	@cp -rp lib/CMSIS/README.md          build/release/tinygo/lib/CMSIS
-	@cp -rp lib/macos-minimal-sdk/*      build/release/tinygo/lib/macos-minimal-sdk
-	@cp -rp lib/musl/arch/aarch64        build/release/tinygo/lib/musl/arch
-	@cp -rp lib/musl/arch/arm            build/release/tinygo/lib/musl/arch
-	@cp -rp lib/musl/arch/generic        build/release/tinygo/lib/musl/arch
-	@cp -rp lib/musl/arch/i386           build/release/tinygo/lib/musl/arch
-	@cp -rp lib/musl/arch/x86_64         build/release/tinygo/lib/musl/arch
-	@cp -rp lib/musl/crt/crt1.c          build/release/tinygo/lib/musl/crt
-	@cp -rp lib/musl/COPYRIGHT           build/release/tinygo/lib/musl
-	@cp -rp lib/musl/include             build/release/tinygo/lib/musl
-	@cp -rp lib/musl/src/env             build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/errno           build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/exit            build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/include         build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/internal        build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/legacy          build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/malloc          build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/mman            build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/math            build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/signal          build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/stdio           build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/string          build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/thread          build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/time            build/release/tinygo/lib/musl/src
-	@cp -rp lib/musl/src/unistd          build/release/tinygo/lib/musl/src
-	@cp -rp lib/mingw-w64/mingw-w64-crt/def-include                 build/release/tinygo/lib/mingw-w64/mingw-w64-crt
-	@cp -rp lib/mingw-w64/mingw-w64-crt/lib-common/api-ms-win-crt-* build/release/tinygo/lib/mingw-w64/mingw-w64-crt/lib-common
-	@cp -rp lib/mingw-w64/mingw-w64-crt/lib-common/kernel32.def.in  build/release/tinygo/lib/mingw-w64/mingw-w64-crt/lib-common
-	@cp -rp lib/mingw-w64/mingw-w64-headers/crt/                    build/release/tinygo/lib/mingw-w64/mingw-w64-headers
-	@cp -rp lib/mingw-w64/mingw-w64-headers/defaults/include        build/release/tinygo/lib/mingw-w64/mingw-w64-headers/defaults
-	@cp -rp lib/nrfx/*                   build/release/tinygo/lib/nrfx
-	@cp -rp lib/picolibc/newlib/libc/ctype       build/release/tinygo/lib/picolibc/newlib/libc
-	@cp -rp lib/picolibc/newlib/libc/include     build/release/tinygo/lib/picolibc/newlib/libc
-	@cp -rp lib/picolibc/newlib/libc/locale      build/release/tinygo/lib/picolibc/newlib/libc
-	@cp -rp lib/picolibc/newlib/libc/string      build/release/tinygo/lib/picolibc/newlib/libc
-	@cp -rp lib/picolibc/newlib/libc/tinystdio   build/release/tinygo/lib/picolibc/newlib/libc
-	@cp -rp lib/picolibc/newlib/libm/common      build/release/tinygo/lib/picolibc/newlib/libm
-	@cp -rp lib/picolibc/newlib/libm/math        build/release/tinygo/lib/picolibc/newlib/libm
-	@cp -rp lib/picolibc-stdio.c         build/release/tinygo/lib
+	# @cp -rp lib/CMSIS/CMSIS/Include      build/release/tinygo/lib/CMSIS/CMSIS
+	# @cp -rp lib/CMSIS/README.md          build/release/tinygo/lib/CMSIS
+	# @cp -rp lib/macos-minimal-sdk/*      build/release/tinygo/lib/macos-minimal-sdk
+	# @cp -rp lib/musl/arch/aarch64        build/release/tinygo/lib/musl/arch
+	# @cp -rp lib/musl/arch/arm            build/release/tinygo/lib/musl/arch
+	# @cp -rp lib/musl/arch/generic        build/release/tinygo/lib/musl/arch
+	# @cp -rp lib/musl/arch/i386           build/release/tinygo/lib/musl/arch
+	# @cp -rp lib/musl/arch/x86_64         build/release/tinygo/lib/musl/arch
+	# @cp -rp lib/musl/crt/crt1.c          build/release/tinygo/lib/musl/crt
+	# @cp -rp lib/musl/COPYRIGHT           build/release/tinygo/lib/musl
+	# @cp -rp lib/musl/include             build/release/tinygo/lib/musl
+	# @cp -rp lib/musl/src/env             build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/errno           build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/exit            build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/include         build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/internal        build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/legacy          build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/malloc          build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/mman            build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/math            build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/signal          build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/stdio           build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/string          build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/thread          build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/time            build/release/tinygo/lib/musl/src
+	# @cp -rp lib/musl/src/unistd          build/release/tinygo/lib/musl/src
+	# @cp -rp lib/mingw-w64/mingw-w64-crt/def-include                 build/release/tinygo/lib/mingw-w64/mingw-w64-crt
+	# @cp -rp lib/mingw-w64/mingw-w64-crt/lib-common/api-ms-win-crt-* build/release/tinygo/lib/mingw-w64/mingw-w64-crt/lib-common
+	# @cp -rp lib/mingw-w64/mingw-w64-crt/lib-common/kernel32.def.in  build/release/tinygo/lib/mingw-w64/mingw-w64-crt/lib-common
+	# @cp -rp lib/mingw-w64/mingw-w64-headers/crt/                    build/release/tinygo/lib/mingw-w64/mingw-w64-headers
+	# @cp -rp lib/mingw-w64/mingw-w64-headers/defaults/include        build/release/tinygo/lib/mingw-w64/mingw-w64-headers/defaults
+	# @cp -rp lib/nrfx/*                   build/release/tinygo/lib/nrfx
+	# @cp -rp lib/picolibc/newlib/libc/ctype       build/release/tinygo/lib/picolibc/newlib/libc
+	# @cp -rp lib/picolibc/newlib/libc/include     build/release/tinygo/lib/picolibc/newlib/libc
+	# @cp -rp lib/picolibc/newlib/libc/locale      build/release/tinygo/lib/picolibc/newlib/libc
+	# @cp -rp lib/picolibc/newlib/libc/string      build/release/tinygo/lib/picolibc/newlib/libc
+	# @cp -rp lib/picolibc/newlib/libc/tinystdio   build/release/tinygo/lib/picolibc/newlib/libc
+	# @cp -rp lib/picolibc/newlib/libm/common      build/release/tinygo/lib/picolibc/newlib/libm
+	# @cp -rp lib/picolibc/newlib/libm/math        build/release/tinygo/lib/picolibc/newlib/libm
+	# @cp -rp lib/picolibc-stdio.c         build/release/tinygo/lib
 	@cp -rp lib/wasi-libc/sysroot        build/release/tinygo/lib/wasi-libc/sysroot
 	@cp -rp llvm-project/compiler-rt/lib/builtins build/release/tinygo/lib/compiler-rt-builtins
 	@cp -rp llvm-project/compiler-rt/LICENSE.TXT  build/release/tinygo/lib/compiler-rt-builtins
 	@cp -rp src                          build/release/tinygo/src
 	@cp -rp targets                      build/release/tinygo/targets
-	./build/release/tinygo/bin/tinygo build-library -target=cortex-m0     -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0/compiler-rt     compiler-rt
-	./build/release/tinygo/bin/tinygo build-library -target=cortex-m0plus -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0plus/compiler-rt compiler-rt
-	./build/release/tinygo/bin/tinygo build-library -target=cortex-m4     -o build/release/tinygo/pkg/thumbv7em-unknown-unknown-eabi-cortex-m4/compiler-rt    compiler-rt
-	./build/release/tinygo/bin/tinygo build-library -target=cortex-m0     -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0/picolibc     picolibc
-	./build/release/tinygo/bin/tinygo build-library -target=cortex-m0plus -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0plus/picolibc picolibc
-	./build/release/tinygo/bin/tinygo build-library -target=cortex-m4     -o build/release/tinygo/pkg/thumbv7em-unknown-unknown-eabi-cortex-m4/picolibc    picolibc
+	# ./build/release/tinygo/bin/tinygo build-library -target=cortex-m0     -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0/compiler-rt     compiler-rt
+	# ./build/release/tinygo/bin/tinygo build-library -target=cortex-m0plus -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0plus/compiler-rt compiler-rt
+	# ./build/release/tinygo/bin/tinygo build-library -target=cortex-m4     -o build/release/tinygo/pkg/thumbv7em-unknown-unknown-eabi-cortex-m4/compiler-rt    compiler-rt
+	# ./build/release/tinygo/bin/tinygo build-library -target=cortex-m0     -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0/picolibc     picolibc
+	# ./build/release/tinygo/bin/tinygo build-library -target=cortex-m0plus -o build/release/tinygo/pkg/thumbv6m-unknown-unknown-eabi-cortex-m0plus/picolibc picolibc
+	# ./build/release/tinygo/bin/tinygo build-library -target=cortex-m4     -o build/release/tinygo/pkg/thumbv7em-unknown-unknown-eabi-cortex-m4/picolibc    picolibc
 
 release:
 	tar -czf build/release.tar.gz -C build/release tinygo
