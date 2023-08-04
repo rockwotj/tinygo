@@ -134,7 +134,7 @@ else ifeq ($(shell uname -s),Darwin)
 
     CGO_LDFLAGS += -lxar
 
-    USE_SYSTEM_BINARYEN ?= 1
+    # USE_SYSTEM_BINARYEN ?= 1
 
 else ifeq ($(shell uname -s),FreeBSD)
     MD5SUM = md5
