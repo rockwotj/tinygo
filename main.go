@@ -1572,6 +1572,9 @@ func main() {
 
 		err := Build(pkgName, outpath, options)
 		handleCompilerError(err)
+		fmt.Println("build successful")
+		fmt.Println("deploy your transform to a topic:")
+		fmt.Println("\trpk transform deploy")
 	case "build-library":
 		// Note: this command is only meant to be used while making a release!
 		if outpath == "" {
