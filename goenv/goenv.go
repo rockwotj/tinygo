@@ -257,10 +257,6 @@ func sourceDir() string {
 		// Very unlikely. Bail out if it happens.
 		panic("could not get executable path: " + err.Error())
 	}
-	resolved, err := filepath.EvalSymlinks(path)
-	if err == nil {
-		path = resolved
-	}
 	root = filepath.Dir(filepath.Dir(path))
 	if isSourceDir(root) {
 		return root
