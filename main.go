@@ -1530,8 +1530,8 @@ func main() {
 	err = Build(pkgName, *outpath, options)
 	handleCompilerError(err)
 	fmt.Println("build successful")
-	fmt.Println("deploy your transform to a topic:")
-	fmt.Println("\trpk transform deploy")
+	fmt.Println("deploy your wasm function to a topic:")
+	fmt.Println("\trpk wasm deploy")
 }
 
 func upstreamMain() {
