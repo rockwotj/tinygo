@@ -1406,6 +1406,127 @@ func getListOfPackages(pkgs []string, options *compileopts.Options) ([]string, e
 }
 
 func main() {
+	if len(os.Args) > 1 {
+		// Early command processing, before commands are interpreted by the Go flag
+		// library.
+		switch os.Args[1] {
+		case "clang", "ld.lld", "wasm-ld":
+			err := builder.RunTool(os.Args[1], os.Args[2:]...)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+			os.Exit(0)
+		}
+	}
+
+	command := "build"
+
+	opt := flag.String("opt", "z", "optimization level: 0, 1, 2, s, z")
+	gc := flag.String("gc", "conservative", "garbage collector to use (none, leaking, conservative)")
+	panicStrategy := flag.String("panic", "print", "panic strategy (print, trap)")
+	scheduler := flag.String("scheduler", "none", "which scheduler to use (none, tasks, asyncify)")
+	work := flag.Bool("work", false, "print the name of the temporary build directory and do not delete this directory on exit")
+	interpTimeout := flag.Duration("interp-timeout", 180*time.Second, "interp optimization pass timeout")
+	var tags buildutil.TagsFlag
+	flag.Var(&tags, "tags", "a space-separated list of extra build tags")
+	target := flag.String("target", "wasi", "chip/board name or JSON target specification file")
+	var stackSize uint64
+	flag.Func("stack-size", "goroutine stack size (if unknown at compile time)", func(s string) error {
+		size, err := bytesize.Parse(s)
+		stackSize = uint64(size)
+		return err
+	})
+	printSize := flag.String("size", "", "print sizes (none, short, full)")
+	printStacks := flag.Bool("print-stacks", false, "print stack sizes of goroutines")
+	printAllocsString := flag.String("print-allocs", "", "regular expression of functions for which heap allocations should be printed")
+	printCommands := flag.Bool("x", false, "Print commands")
+	parallelism := flag.Int("p", runtime.GOMAXPROCS(0), "the number of build jobs that can run in parallel")
+	nodebug := flag.Bool("no-debug", false, "strip debug information")
+	programmer := flag.String("programmer", "", "which hardware programmer to use")
+	ldflags := flag.String("ldflags", "", "Go link tool compatible ldflags")
+	llvmFeatures := flag.String("llvm-features", "", "comma separated LLVM features to enable")
+	flagJSON := flag.Bool("json", false, "print data in JSON format")
+	outpath := flag.String("o", "", "output filename")
+	// strip the .rpk.managed-tinygo prefix
+	flag.CommandLine.Parse(os.Args[1:])
+	globalVarValues, err := parseGoLinkFlag(*ldflags)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	var printAllocs *regexp.Regexp
+	if *printAllocsString != "" {
+		printAllocs, err = regexp.Compile(*printAllocsString)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	}
+	options := &compileopts.Options{
+		GOOS:            goenv.Get("GOOS"),
+		GOARCH:          goenv.Get("GOARCH"),
+		GOARM:           goenv.Get("GOARM"),
+		Target:          *target,
+		StackSize:       stackSize,
+		Opt:             *opt,
+		GC:              *gc,
+		PanicStrategy:   *panicStrategy,
+		Scheduler:       *scheduler,
+		Serial:          "",
+		Work:            *work,
+		InterpTimeout:   *interpTimeout,
+		PrintIR:         false,
+		DumpSSA:         false,
+		VerifyIR:        false,
+		SkipDWARF:       false,
+		Semaphore:       make(chan struct{}, *parallelism),
+		Debug:           !*nodebug,
+		PrintSizes:      *printSize,
+		PrintStacks:     *printStacks,
+		PrintAllocs:     printAllocs,
+		Tags:            []string(tags),
+		TestConfig:      compileopts.TestConfig{},
+		GlobalValues:    globalVarValues,
+		Programmer:      *programmer,
+		OpenOCDCommands: nil,
+		LLVMFeatures:    *llvmFeatures,
+		PrintJSON:       *flagJSON,
+		Monitor:         false,
+		BaudRate:        115200,
+		Timeout:         20 * time.Second,
+	}
+	if *printCommands {
+		options.PrintCommands = printCommand
+	}
+	err = options.Verify()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		usage(command)
+		os.Exit(1)
+	}
+	pkgName := "."
+	if flag.NArg() == 1 {
+		pkgName = filepath.ToSlash(flag.Arg(0))
+	} else if flag.NArg() > 1 {
+		fmt.Fprintln(os.Stderr, "build only accepts a single positional argument: package name, but multiple were specified")
+		usage(command)
+		os.Exit(1)
+	}
+	if options.Target == "" && filepath.Ext(*outpath) == ".wasm" {
+		options.Target = "wasm"
+	}
+
+	err = Build(pkgName, *outpath, options)
+	handleCompilerError(err)
+	fmt.Println("build successful")
+	fmt.Println("deploy your wasm function to a topic:")
+	fmt.Println("\trpk wasm deploy")
+}
+
+func upstreamMain() {
+>>>>>>> c6c68bbf (Revert "Add autocomplete commands")
 	if len(os.Args) < 2 {
 		fmt.Fprintln(os.Stderr, "No command-line arguments supplied.")
 		usage("")
