@@ -1,0 +1,15 @@
+Fixes a compiler error that is enabled by default in clang
+
+diff --git a/src/passes/CoalesceLocals.cpp b/src/passes/CoalesceLocals.cpp
+index c58a48834..d62981d2c 100644
+--- a/src/passes/CoalesceLocals.cpp
++++ b/src/passes/CoalesceLocals.cpp
+@@ -299,7 +299,7 @@ void CoalesceLocals::pickIndicesFromOrder(std::vector<Index>& order,
+       // go in the order, we only need to update for those we will see later
+       auto j = order[k];
+       newInterferences[found * numLocals + j] =
+-        newInterferences[found * numLocals + j] | interferes(actual, j);
++        newInterferences[found * numLocals + j] || interferes(actual, j);
+       newCopies[found * numLocals + j] += getCopies(actual, j);
+     }
+   }
