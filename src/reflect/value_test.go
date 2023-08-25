@@ -191,6 +191,24 @@ func TestTinyMap(t *testing.T) {
 	if _, ok := utIterKey.Interface().(unmarshalerText); !ok {
 		t.Errorf("Map keys via MapIter() have wrong type: %v", utIterKey.Type().String())
 	}
+
+	{
+		m := map[any]any{1: 2}
+		rv := ValueOf(m)
+		iter := rv.MapRange()
+
+		iter.Next()
+		k := iter.Key()
+		if k.Kind().String() != "interface" {
+			t.Errorf("map[any]any MapRange has wrong key type: %v", k.Kind().String())
+		}
+
+		keys := rv.MapKeys()
+		if k := keys[0]; k.Kind().String() != "interface" {
+			t.Errorf("map[any]any MapRange has wrong key type: %v", k.Kind().String())
+		}
+
+	}
 }
 
 // For an interface type, it returns the number of exported and unexported methods.
@@ -542,7 +560,7 @@ type methodStruct struct {
 	i int
 }
 
-func (m methodStruct) valueMethod1() int {
+func (m methodStruct) ValueMethod1() int {
 	return m.i
 }
 
@@ -550,11 +568,11 @@ func (m methodStruct) valueMethod2() int {
 	return m.i
 }
 
-func (m *methodStruct) pointerMethod1() int {
+func (m *methodStruct) PointerMethod1() int {
 	return m.i
 }
 
-func (m *methodStruct) pointerMethod2() int {
+func (m *methodStruct) PointerMethod2() int {
 	return m.i
 }
 
@@ -564,12 +582,12 @@ func (m *methodStruct) pointerMethod3() int {
 
 func TestTinyNumMethods(t *testing.T) {
 	refptrt := TypeOf(&methodStruct{})
-	if got, want := refptrt.NumMethod(), 2+3; got != want {
+	if got, want := refptrt.NumMethod(), 1+2; got != want {
 		t.Errorf("Pointer Methods=%v, want %v", got, want)
 	}
 
 	reft := refptrt.Elem()
-	if got, want := reft.NumMethod(), 2; got != want {
+	if got, want := reft.NumMethod(), 1; got != want {
 		t.Errorf("Value Methods=%v, want %v", got, want)
 	}
 }
