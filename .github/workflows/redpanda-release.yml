@@ -1,0 +1,41 @@
+name: Create Release Artifacts
+
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-artifacts-macos-x64:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+      - run: |
+          cd .github
+          ./build-library-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-tarball-macos-x64
+          path: ./.github/tmp/build/release.tar.gz
+  build-artifacts-macos-arm64:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+      - run: |
+          cd .github
+          ./build-library-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-tarball-macos-arm64
+          path: ./.github/tmp/build/release.tar.gz
