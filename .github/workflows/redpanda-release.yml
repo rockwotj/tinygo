@@ -1,0 +1,41 @@
+name: Create Release Artifacts
+
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-artifacts-linux-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+      - run: |
+          mkdir build-output
+          IMAGE=$(docker build -q .github)
+          CONTAINER=$(docker run -it $IMAME /build-static-library-linux.sh)
+          docker cp $CONTAINER:/home/tinygo-build/build/release.tar.gz ./build-output/release.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-tarball-linux-x64
+          path: ./build-output/release.tar.gz
+  build-artifacts-linux-arm64:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+      - run: |
+          mkdir build-output
+          IMAGE=$(docker build -q .github)
+          CONTAINER=$(docker run -it $IMAME /build-static-library-linux.sh)
+          docker cp $CONTAINER:/home/tinygo-build/build/release.tar.gz ./build-output/release.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-tarball-linux-arm64
+          path: ./build-output/release.tar.gz
+
+
